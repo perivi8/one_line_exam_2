@@ -1,0 +1,11 @@
+2025-06-01 13:46:40,690 - __main__ - ERROR - MongoDB connection failed: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 683c0c4a24ed91958116d832, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-06-01 13:51:37,846 - __main__ - INFO - MongoDB connection successful
+2025-06-01 13:51:41,388 - __main__ - INFO - MongoDB connection successful
+2025-06-01 13:55:00,655 - __main__ - INFO - CORS initialized for http://localhost:4200
+2025-06-01 13:55:01,582 - __main__ - INFO - MongoDB connection successful
+2025-06-01 13:55:11,277 - __main__ - INFO - CORS initialized for http://localhost:4200
+2025-06-01 13:55:12,836 - __main__ - INFO - MongoDB connection successful
+2025-06-01 13:59:08,109 - __main__ - INFO - CORS initialized for http://localhost:4200
+2025-06-01 13:59:09,358 - __main__ - INFO - MongoDB connection successful
+2025-06-01 13:59:18,218 - __main__ - INFO - CORS initialized for http://localhost:4200
+2025-06-01 13:59:19,485 - __main__ - INFO - MongoDB connection successful
