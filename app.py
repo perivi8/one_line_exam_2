@@ -8,7 +8,6 @@ from routes.proctoring import proctoring_bp
 from routes.queries import queries_bp
 from config import Config
 import logging
-import os
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -16,13 +15,11 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configure CORS
-allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:4200,https://online-exam-system-nine.vercel.app').split(',')
-CORS(app, resources={r"/api/*": {"origins": allowed_origins}}, supports_credentials=True)
+# Configure CORS to allow requests from the deployed frontend
+CORS(app, resources={r"/api/*": {"origins": ["https://online-exam-system-nine.vercel.app"]}}, supports_credentials=True)
 
 # Load configuration
 app.config.from_object(Config)
-
 jwt = JWTManager(app)
 mail = Mail(app)
 
