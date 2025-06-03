@@ -32,16 +32,21 @@ def raise_query():
         return jsonify({'message': 'Unauthorized'}), 403
 
     data = request.get_json()
-    if not all(key in data for key in ['exam_id', 'student_id', 'query_text', 'submitted_at']):
+    if not data or not all(key in data for key in ['exam_id', 'student_id', 'query_text', 'submitted_at']):
         return jsonify({'message': 'Missing required fields'}), 400
+
+    try:
+        submitted_at = datetime.fromisoformat(data['submitted_at'])
+    except ValueError:
+        return jsonify({'message': 'Invalid date format for submitted_at'}), 400
 
     query = {
         'exam_id': data['exam_id'],
-        'student_id': current_user.get('student_id'),
+        'student_id': data['student_id'],
         'query_text': data['query_text'],
-        'timestamp': datetime.fromisoformat(data['submitted_at']),
+        'submitted_at': submitted_at,
         'status': 'pending'
     }
     queries_collection.insert_one(query)
-    logger.info(f"Query submitted by student {current_user.get('student_id')} for exam {data['exam_id']}")
+    logger.info(f"Query raised by student {data['student_id']} for exam {data['exam_id']}")
     return jsonify({'message': 'Query submitted successfully'}), 201
