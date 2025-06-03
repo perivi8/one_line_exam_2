@@ -17,17 +17,12 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Configure CORS
-from flask_cors import CORS
-
-CORS(app, resources={r"/api/*": {
-    "origins": ["https://online-exam-system-nine.vercel.app"],
-    "allow_headers": "*",
-    "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
-}}, supports_credentials=True)
-
+allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:4200,https://online-exam-system-nine.vercel.app').split(',')
+CORS(app, resources={r"/api/*": {"origins": allowed_origins}}, supports_credentials=True)
 
 # Load configuration
 app.config.from_object(Config)
+
 jwt = JWTManager(app)
 mail = Mail(app)
 
@@ -39,5 +34,5 @@ app.register_blueprint(queries_bp, url_prefix='/api')
 
 logger.info("Flask application started")
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)

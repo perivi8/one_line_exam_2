@@ -16,7 +16,7 @@ mail = Mail()
 def register():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         return response, 200
@@ -39,7 +39,7 @@ def register():
 def login():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         return response, 200
@@ -62,7 +62,7 @@ def login():
 def forgot_password():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         return response, 200
@@ -81,7 +81,7 @@ def forgot_password():
 def verify_code():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         return response, 200
@@ -95,7 +95,7 @@ def verify_code():
 def reset_password():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         return response, 200

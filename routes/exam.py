@@ -29,7 +29,7 @@ def create_exam():
     # Handle preflight OPTIONS request
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')  # Cache preflight for 24 hours
@@ -132,7 +132,7 @@ def edit_exam(exam_id):
     logger.info(f"Received {request.method} request to edit exam {exam_id}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'PATCH, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -218,7 +218,7 @@ def delete_exam(exam_id):
     logger.info(f"Received {request.method} request to delete exam {exam_id}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'DELETE, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -242,7 +242,7 @@ def get_exams():
     logger.info(f"Received {request.method} request to get exams")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -296,7 +296,7 @@ def get_exam_by_id(exam_id):
     logger.info(f"Received {request.method} request to get exam {exam_id}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -329,7 +329,7 @@ def submit_exam():
     logger.info(f"Received {request.method} request to submit exam")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -392,7 +392,7 @@ def start_exam(exam_id):
     logger.info(f"Received {request.method} request to start exam {exam_id}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app)
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200
@@ -446,7 +446,7 @@ def evaluate_exam():
     logger.info(f"Received {request.method} request to evaluate exam")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -488,7 +488,7 @@ def get_submission(exam_id, user_email):
     logger.info(f"Received {request.method} request to get submission for exam {exam_id}, user {user_email}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
@@ -532,7 +532,7 @@ def get_student(student_email):
     logger.info(f"Received {request.method} request to get student {student_email}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')

@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def start_proctoring_route():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200
@@ -63,7 +63,7 @@ def start_proctoring_route():
 def log_malpractice():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200
@@ -86,7 +86,7 @@ def log_malpractice():
 def stop_exam(exam_id, student_id):
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200
@@ -120,7 +120,7 @@ def stop_exam(exam_id, student_id):
 def get_proctoring_logs():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200

@@ -14,7 +14,7 @@ queries_collection = db['queries']
 def raise_query():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200
