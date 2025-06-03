@@ -392,7 +392,7 @@ def start_exam(exam_id):
     logger.info(f"Received {request.method} request to start exam {exam_id}")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app)
+        response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         return response, 200
