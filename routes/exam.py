@@ -10,7 +10,6 @@ import json
 import logging
 from config import Config
 
-
 exam_bp = Blueprint('exam', __name__)
 client = MongoClient(Config.MONGO_URI)
 db = client['online_exam']
@@ -22,21 +21,18 @@ users_collection = db['users']
 logger = logging.getLogger(__name__)
 
 @exam_bp.route('/create-exam', methods=['POST', 'OPTIONS'])
-@jwt_required(optional=True)  # Allow OPTIONS without JWT
+@jwt_required(optional=True)
 def create_exam():
     logger.info(f"Received {request.method} request to create exam")
-
-    # Handle preflight OPTIONS request
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        response.headers.add('Access-Control-Max-Age', '86400')  # Cache preflight for 24 hours
+        response.headers.add('Access-Control-Max-Age', '86400')
         logger.info("Responded to OPTIONS preflight request")
         return response, 200
 
-    # For POST, ensure JWT is present
     current_user = get_jwt_identity()
     if not current_user:
         logger.error("No JWT identity found for POST request")
@@ -49,16 +45,9 @@ def create_exam():
 
     data = request.form.to_dict()
     questions = []
-
-    # Debug: Log received form data
     logger.info(f"Received form data: {dict(request.form)}")
     if 'csv_file' in request.files:
         logger.info("CSV file detected")
-    if request.form.getlist('questions[]'):
-        logger.info(f"Manual questions received: {request.form.getlist('questions[]')}")
-
-    # Process CSV file if provided
-    if 'csv_file' in request.files:
         csv_file = request.files['csv_file']
         if csv_file.filename.endswith('.csv'):
             stream = StringIO(csv_file.stream.read().decode('UTF-8'))
@@ -80,12 +69,11 @@ def create_exam():
                     })
             logger.info(f"Processed {len(questions)} questions from CSV")
 
-    # If no CSV, process manual questions
     elif request.form.getlist('questions[]'):
         question_data = request.form.getlist('questions[]')
         for q in question_data:
             try:
-                q_dict = json.loads(q)  # Use json.loads for safe parsing
+                q_dict = json.loads(q)
                 if q_dict['type'] == 'mcq':
                     questions.append({
                         'question': q_dict['question'],
@@ -158,7 +146,7 @@ def edit_exam(exam_id):
     if 'duration' in data:
         update['duration'] = int(data['duration'])
     if 'scheduled_for' in data:
-        update['scheduled_for'] = datetime.strptime(data['scheduled_for'], '%Y-%m-%dT%H:%M')
+        update['scheduled_for'] = datetime.strptime(data['scheduled_for'], '%Y-%m-%dT%H:%M:%S.%fZ')
     if 'randomized' in data:
         update['randomized'] = data['randomized'] == 'true'
     if 'difficulty' in data:
@@ -209,7 +197,7 @@ def edit_exam(exam_id):
 
     if update:
         exams_collection.update_one({'_id': ObjectId(exam_id)}, {'$set': update})
-        return jsonify({'message': 'Exam updated successfully'})
+        return jsonify({'message': 'Exam updated successfully'}), 200
     return jsonify({'message': 'No changes provided'}), 400
 
 @exam_bp.route('/delete-exam/<exam_id>', methods=['DELETE', 'OPTIONS'])
@@ -222,6 +210,7 @@ def delete_exam(exam_id):
         response.headers.add('Access-Control-Allow-Methods', 'DELETE, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
+        logger.info("Responded to OPTIONS preflight request")
         return response, 200
 
     current_user = get_jwt_identity()
@@ -234,7 +223,7 @@ def delete_exam(exam_id):
     result = exams_collection.delete_one({'_id': ObjectId(exam_id), 'created_by': current_user['email']})
     if result.deleted_count == 0:
         return jsonify({'message': 'Exam not found or unauthorized'}), 404
-    return jsonify({'message': 'Exam deleted successfully'})
+    return jsonify({'message': 'Exam deleted successfully'}), 200
 
 @exam_bp.route('/get-exams', methods=['GET', 'OPTIONS'])
 @jwt_required(optional=True)
@@ -288,7 +277,7 @@ def get_exams():
                 'start_time': submission.get('start_time', '').isoformat() if submission.get('start_time') else None
             }
         result.append(exam_data)
-    return jsonify(result)
+    return jsonify(result), 200
 
 @exam_bp.route('/get-exams/<exam_id>', methods=['GET', 'OPTIONS'])
 @jwt_required(optional=True)
@@ -302,15 +291,15 @@ def get_exam_by_id(exam_id):
         response.headers.add('Access-Control-Max-Age', '86400')
         logger.info("Responded to OPTIONS preflight request")
         return response, 200
-    
+
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'message': 'Missing authorization token'}), 401
-    
+
     exam = exams_collection.find_one({'_id': ObjectId(exam_id)})
     if not exam:
         return jsonify({'message': 'Exam not found'}), 404
-    
+
     exam_data = {
         'exam_id': str(exam['_id']),
         'title': exam['title'],
@@ -318,13 +307,13 @@ def get_exam_by_id(exam_id):
         'scheduled_for': exam['scheduled_for'].isoformat(),
         'randomized': exam['randomized'],
         'difficulty': exam['difficulty'],
-        'questions': exam['questions'] if current_user.get('role') in ['teacher', 'examiner'] else [],
+        'questions': exam['questions'] if current_user.get('role') in ['teacher', 'examiner'] or exam['scheduled_for'] <= datetime.utcnow() else [],
         'status': exam['status']
     }
     return jsonify(exam_data), 200
 
 @exam_bp.route('/submit-exam', methods=['POST', 'OPTIONS'])
-@jwt_required(optional=True)
+@jwt_required()
 def submit_exam():
     logger.info(f"Received {request.method} request to submit exam")
     if request.method == 'OPTIONS':
@@ -333,6 +322,7 @@ def submit_exam():
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
+        logger.info("Responded to OPTIONS preflight request")
         return response, 200
 
     current_user = get_jwt_identity()
@@ -371,30 +361,32 @@ def submit_exam():
                 'score': score,
                 'submitted_at': datetime.utcnow(),
                 'status': 'completed'
-            }}
+            }
         )
     else:
         submissions_collection.insert_one({
             'exam_id': data['exam_id'],
             'user_email': current_user['email'],
-            'student_id': current_user['student_id'],
+            'student_id': current_user.get('student_id'),
             'answers': answers,
             'score': score,
             'start_time': data.get('start_time', datetime.utcnow()),
             'submitted_at': datetime.utcnow(),
             'status': 'completed'
         })
-    return jsonify({'message': 'Exam submitted successfully'})
+    return jsonify({'message': 'Exam submitted successfully'}), 201
 
 @exam_bp.route('/start-exam/<exam_id>', methods=['POST', 'OPTIONS'])
-@jwt_required(optional=True)
+@jwt_required()
 def start_exam(exam_id):
-    logger.info(f"Received {request.method} request to start exam {exam_id}")
+    logger.info(f"Received {request.method} request to {start_exam} {exam_id}")
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
-        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, 'OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, 'Authorization')
+        response.headers.add('Access-Control-Max-Age', '86400')
+        logger.info("Returning to options request for start-exam")
         return response, 200
 
     current_user = get_jwt_identity()
@@ -416,7 +408,7 @@ def start_exam(exam_id):
     submission = submissions_collection.find_one({
         'exam_id': exam_id,
         'user_email': current_user['email']
-    })
+        })
     if submission:
         return jsonify({
             'message': 'Exam already started',
@@ -441,15 +433,16 @@ def start_exam(exam_id):
     }), 200
 
 @exam_bp.route('/evaluate-exam', methods=['POST', 'OPTIONS'])
-@jwt_required(optional=True)
+@jwt_required
 def evaluate_exam():
     logger.info(f"Received {request.method} request to evaluate exam")
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
+        logger.info("Responded to OPTIONS preflight request")
         return response, 200
 
     current_user = get_jwt_identity()
@@ -480,18 +473,19 @@ def evaluate_exam():
             'status': 'completed'
         }}
     )
-    return jsonify({'message': 'Exam evaluated successfully'})
+    return jsonify({'message': 'Exam evaluated successfully'}), 200
 
 @exam_bp.route('/get-submission/<exam_id>/<user_email>', methods=['GET', 'OPTIONS'])
-@jwt_required(optional=True)
+@jwt_required
 def get_submission(exam_id, user_email):
     logger.info(f"Received {request.method} request to get submission for exam {exam_id}, user {user_email}")
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
-        response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET', 'OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Max-Age', '86400')
+        logger.info("Returning to OPTIONS request")
         return response, 200
 
     current_user = get_jwt_identity()
@@ -499,7 +493,7 @@ def get_submission(exam_id, user_email):
         return jsonify({'message': 'Missing authorization token'}), 401
 
     if current_user.get('role') not in ['teacher', 'examiner']:
-        return jsonify({'message': 'Unauthorized'}), 403
+        return jsonify({'message': 'Unauthorized access'}), 403
 
     submission = submissions_collection.find_one({
         'exam_id': exam_id,
@@ -519,23 +513,24 @@ def get_submission(exam_id, user_email):
         'questions': exam['questions'],
         'answers': submission['answers'],
         'mcq_score': submission['score'],
-        'subjective_marks': submission.get('subjective_marks', 0),
-        'total_marks': submission.get('total_marks', 0),
+        'subjective': submission.get('subjective_marks', 0),
+        'total_marks': submission.get('total_marks', '0),
         'rank': submission.get('rank', ''),
         'status': submission['status'],
         'start_time': submission.get('start_time', '').isoformat() if submission.get('start_time') else None
-    })
+    }), 200
 
 @exam_bp.route('/get-student/<student_email>', methods=['GET', 'OPTIONS'])
-@jwt_required(optional=True)
+@jwt_required
 def get_student(student_email):
     logger.info(f"Received {request.method} request to get student {student_email}")
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add('Access-Control-Allow-Origin', 'https://online-exam-system-nine.vercel.app')
-        response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        response.headers.add('Access-Control-Max-Age', '86400')
+        response.headers.add('Access-Control-Allow-Methods', 'GET', 'OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type', 'Authorization')
+        response.headers.add('Access-Control-Max-Age', '86400'')
+        logger.info("Returning to OPTIONS response")
         return response, 200
 
     current_user = get_jwt_identity()
@@ -553,4 +548,4 @@ def get_student(student_email):
         'name': student['name'],
         'email': student['email'],
         'student_id': student['student_id']
-    })
+    }), 200

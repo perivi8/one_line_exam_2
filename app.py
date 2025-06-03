@@ -12,11 +12,10 @@ import logging
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 app = Flask(__name__)
 
-# Configure CORS to allow requests from the deployed frontend
-CORS(app, resources={r"/api/*": {"origins": ["https://online-exam-system-nine.vercel.app"]}}, supports_credentials=True)
+# Configure CORS to allow requests from the Vercel frontend
+CORS(app, resources={r"/api/*": {"origins": ["https://online-exam-system-nine.vercel.app"], "supports_credentials": True}})
 
 # Load configuration
 app.config.from_object(Config)
